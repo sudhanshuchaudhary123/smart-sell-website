@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management - SmartSell Admin</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .admin-header { background: #212529; color: white; padding: 1rem; display: flex; justify-content: space-between; align-items: center; }
+        .admin-header button { background: #dc3545; color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; }
+        .admin-container { display: grid; grid-template-columns: 200px 1fr; min-height: 100vh; }
+        .admin-sidebar { background: #f8f9fa; padding: 1.5rem 0; }
+        .admin-nav a { display: block; padding: 1rem 1.5rem; color: #333; text-decoration: none; transition: all 0.3s; }
+        .admin-nav a:hover, .admin-nav a.active { background: #007bff; color: white; }
+        .admin-content { padding: 2rem; }
+        .order-card { background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 1.5rem; }
+        .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .order-id { font-weight: bold; font-size: 1.1rem; }
+        .status-badge { padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; font-weight: bold; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-shipped { background: #cfe2ff; color: #084298; }
+        .status-delivered { background: #d1e7dd; color: #0f5132; }
+        .order-details { margin: 1rem 0; line-height: 1.8; }
+        .btn-update { background: #007bff; color: white; border: none; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; margin-top: 1rem; }
+        .no-orders { text-align: center; padding: 2rem; color: #999; }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <h1>📱 SmartSell Admin - Orders</h1>
+        <button onclick="adminLogout()">Logout</button>
+    </div>
+
+    <div class="admin-container">
+        <aside class="admin-sidebar">
+            <ul style="list-style: none; padding: 0; margin: 0;" class="admin-nav">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="products.html">Products</a></li>
+                <li><a href="orders.html" class="active">Orders</a></li>
+                <li><a href="users.html">Users</a></li>
+            </ul>
+        </aside>
+
+        <div class="admin-content">
+            <h2>Order Management</h2>
+            <div id="ordersList"></div>
+        </div>
+    </div>
+
+    <script src="../js/products.js"></script>
+    <script>
+        function checkAdminAuth() {
+            if (!localStorage.getItem('adminLoggedIn')) window.location.href = 'login.html';
+        }
+
+        function loadOrders() {
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            const container = document.getElementById('ordersList');
+
+            if (orders.length === 0) {
+                container.innerHTML = '<div class="no-orders"><h3>No orders yet</h3></div>';
+                return;
+            }
+
+            container.innerHTML = orders.map(order => `
+                <div class="order-card">
+                    <div class="order-header">
+                        <div class="order-id">${order.id}</div>
+                        <div class="status-badge status-${order.status}">${order.status.toUpperCase()}</div>
+                    </div>
+                    <div class="order-details">
+                        <strong>Customer:</strong> ${order.customer.name} (${order.customer.email})<br>
+                        <strong>Phone:</strong> ${order.customer.phone}<br>
+                        <strong>Address:</strong> ${order.address.address}, ${order.address.city}, ${order.address.pincode}<br>
+                        <strong>Items:</strong> ${order.items.map(i => `${i.quantity}x ${i.name}`).join(', ')}<br>
+                        <strong>Total:</strong> ₹${order.total.toLocaleString('en-IN')}<br>
+                        <strong>Payment:</strong> ${order.paymentMethod.toUpperCase()}<br>
+                        <strong>Date:</strong> ${new Date(order.createdAt).toLocaleDateString()}
+                    </div>
+                    <button class="btn-update" onclick="updateOrderStatus('${order.id}')">Update Status</button>
+                </div>
+            `).join('');
+        }
+
+        function updateOrderStatus(orderId) {
+            const newStatus = prompt('Enter new status (pending/shipped/delivered):');
+            if (newStatus) {
+                let orders = JSON.parse(localStorage.getItem('orders')) || [];
+                orders = orders.map(o => o.id === orderId ? {...o, status: newStatus} : o);
+                localStorage.setItem('orders', JSON.stringify(orders));
+                loadOrders();
+                alert('Order status updated!');
+            }
+        }
+
+        function adminLogout() {
+            localStorage.removeItem('adminLoggedIn');
+            window.location.href = 'login.html';
+        }
+
+        window.addEventListener('load', () => {
+            checkAdminAuth();
+            loadOrders();
+        });
+    </script>
+</body>
+</html>
