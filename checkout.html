@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - SmartSell</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .checkout-container { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; padding: 2rem 0; }
+        .checkout-form { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .form-section { margin-bottom: 2rem; }
+        .form-section h3 { font-size: 1.3rem; margin-bottom: 1rem; color: var(--dark-color); border-bottom: 2px solid var(--primary-color); padding-bottom: 0.5rem; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+        .form-row.full { grid-template-columns: 1fr; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { margin-bottom: 0.5rem; font-weight: 500; color: var(--dark-color); }
+        .form-group input, .form-group select, .form-group textarea { padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 5px; font-size: 1rem; font-family: inherit; }
+        .payment-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem; }
+        .payment-option { display: flex; align-items: center; padding: 1rem; border: 2px solid var(--border-color); border-radius: 5px; cursor: pointer; transition: all 0.3s; }
+        .payment-option input { margin-right: 0.5rem; cursor: pointer; }
+        .payment-option:hover, .payment-option input:checked ~ * { border-color: var(--primary-color); background: #f0f8ff; }
+        .order-summary { background: var(--light-color); padding: 2rem; border-radius: 10px; height: fit-content; }
+        .order-item { display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color); font-size: 0.95rem; }
+        .summary-line { display: flex; justify-content: space-between; padding: 0.5rem 0; margin-bottom: 0.5rem; }
+        .place-order-btn { width: 100%; padding: 1rem; background: var(--secondary-color); color: white; border: none; border-radius: 5px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 2rem; }
+        .place-order-btn:hover { background: #218838; }
+        @media (max-width: 768px) { .checkout-container { grid-template-columns: 1fr; } .payment-options { grid-template-columns: 1fr; } .form-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo"><h1>📱 SmartSell</h1></div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="account.html">Account</a></li>
+                <li><a href="cart.html" class="cart-link">🛒 Cart <span class="cart-count">0</span></a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h1 style="margin: 2rem 0; font-size: 2rem;">Checkout</h1>
+        <div class="checkout-container">
+            <form class="checkout-form" id="checkoutForm" onsubmit="submitOrder(event)">
+                <div class="form-section">
+                    <h3>Personal Information</h3>
+                    <div class="form-row">
+                        <div class="form-group"><label>First Name *</label><input type="text" id="firstName" required></div>
+                        <div class="form-group"><label>Last Name *</label><input type="text" id="lastName" required></div>
+                    </div>
+                    <div class="form-row full">
+                        <div class="form-group"><label>Email *</label><input type="email" id="email" required></div>
+                    </div>
+                    <div class="form-row full">
+                        <div class="form-group"><label>Phone *</label><input type="tel" id="phone" required></div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Shipping Address</h3>
+                    <div class="form-row full">
+                        <div class="form-group"><label>Street Address *</label><input type="text" id="address" required></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>City *</label><input type="text" id="city" required></div>
+                        <div class="form-group"><label>State *</label><input type="text" id="state" required></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Pincode *</label><input type="text" id="pincode" required></div>
+                        <div class="form-group"><label>Country *</label><input type="text" id="country" value="India" required></div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Payment Method</h3>
+                    <div class="payment-options">
+                        <label class="payment-option"><input type="radio" name="payment" value="upi" required><span>🏦 UPI</span></label>
+                        <label class="payment-option"><input type="radio" name="payment" value="card"><span>💳 Card</span></label>
+                        <label class="payment-option"><input type="radio" name="payment" value="cod"><span>🛋 COD</span></label>
+                    </div>
+                </div>
+            </form>
+
+            <div class="order-summary">
+                <h3>Order Summary</h3>
+                <div id="orderItems"></div>
+                <div class="summary-line"><span>Subtotal:</span><span id="subtotal">₹0</span></div>
+                <div class="summary-line"><span>Shipping:</span><span id="shipping">₹500</span></div>
+                <div class="summary-line"><span>Tax (18%):</span><span id="tax">₹0</span></div>
+                <div class="summary-line" style="font-weight: bold; color: var(--primary-color); font-size: 1.2rem; border-top: 2px solid var(--border-color); padding-top: 1rem;">
+                    <span>Total:</span><span id="totalAmount">₹0</span>
+                </div>
+                <button class="place-order-btn" onclick="placeOrder()">Place Order</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section"><h4>About Us</h4><p>SmartSell is your trusted platform for premium smartphones.</p></div>
+                <div class="footer-section"><h4>Quick Links</h4><ul><li><a href="shop.html">Shop</a></li></ul></div>
+                <div class="footer-section"><h4>Contact</h4><p>Email: support@smartsell.com</p></div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/products.js"></script>
+    <script>
+        function loadOrderSummary() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const itemsContainer = document.getElementById('orderItems');
+            let subtotal = 0, html = '';
+
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+                html += `<div class="order-item"><span>${item.quantity}x ${item.name}</span><span>${formatCurrency(itemTotal)}</span></div>`;
+            });
+
+            const shipping = subtotal > 15000 ? 0 : 500;
+            const tax = Math.round(subtotal * 0.18);
+            const total = subtotal + shipping + tax;
+
+            itemsContainer.innerHTML = html;
+            document.getElementById('subtotal').textContent = formatCurrency(subtotal);
+            document.getElementById('shipping').textContent = shipping === 0 ? 'FREE' : formatCurrency(shipping);
+            document.getElementById('tax').textContent = formatCurrency(tax);
+            document.getElementById('totalAmount').textContent = formatCurrency(total);
+            window.orderTotal = total;
+        }
+
+        function submitOrder(e) { e.preventDefault(); return false; }
+
+        function placeOrder() {
+            const form = document.getElementById('checkoutForm');
+            if (!form.checkValidity()) { alert('Please fill all fields'); form.reportValidity(); return; }
+
+            const order = {
+                id: 'ORD-' + Date.now(),
+                customer: { name: document.getElementById('firstName').value + ' ' + document.getElementById('lastName').value, email: document.getElementById('email').value, phone: document.getElementById('phone').value },
+                address: { address: document.getElementById('address').value, city: document.getElementById('city').value, state: document.getElementById('state').value, pincode: document.getElementById('pincode').value },
+                items: JSON.parse(localStorage.getItem('cart')) || [],
+                paymentMethod: document.querySelector('input[name="payment"]:checked').value,
+                total: window.orderTotal,
+                status: 'pending',
+                createdAt: new Date().toISOString()
+            };
+
+            let orders = JSON.parse(localStorage.getItem('orders')) || [];
+            orders.push(order);
+            localStorage.setItem('orders', JSON.stringify(orders));
+            localStorage.removeItem('cart');
+
+            alert(`Order placed!\nOrder ID: ${order.id}\nThank you for shopping!`);
+            window.location.href = 'account.html';
+        }
+
+        window.addEventListener('load', () => { loadOrderSummary(); updateCartCount(); });
+    </script>
+</body>
+</html>
