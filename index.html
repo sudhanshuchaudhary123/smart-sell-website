@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartSell - Premium Smartphones</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <h1>📱 SmartSell</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="account.html">Account</a></li>
+                <li><a href="cart.html" class="cart-link">🛒 Cart <span class="cart-count">0</span></a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Banner -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Get the Latest Smartphones</h1>
+            <p>Discover cutting-edge phones with incredible deals</p>
+            <button class="btn btn-primary" onclick="window.location.href='shop.html'">Shop Now</button>
+        </div>
+        <div class="hero-image">
+            <div class="phone-mockup">📱</div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="featured-products">
+        <div class="container">
+            <h2>Featured Products</h2>
+            <div class="products-grid" id="featuredProducts">
+                <!-- Products loaded here by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories">
+        <div class="container">
+            <h2>Shop by Brand</h2>
+            <div class="categories-grid">
+                <div class="category-card" onclick="filterByBrand('Apple')">
+                    <div class="category-icon">🍎</div>
+                    <h3>Apple</h3>
+                </div>
+                <div class="category-card" onclick="filterByBrand('Samsung')">
+                    <div class="category-icon">📱</div>
+                    <h3>Samsung</h3>
+                </div>
+                <div class="category-card" onclick="filterByBrand('Xiaomi')">
+                    <div class="category-icon">🔴</div>
+                    <h3>Xiaomi</h3>
+                </div>
+                <div class="category-card" onclick="filterByBrand('OnePlus')">
+                    <div class="category-icon">🚀</div>
+                    <h3>OnePlus</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Deals & Offers -->
+    <section class="deals">
+        <div class="container">
+            <h2>Special Deals This Week</h2>
+            <div class="deals-banner">
+                <div class="deal-card">
+                    <h3>Up to 30% OFF</h3>
+                    <p>On Selected Samsung Models</p>
+                </div>
+                <div class="deal-card">
+                    <h3>Free Shipping</h3>
+                    <p>On Orders Above ₹15,000</p>
+                </div>
+                <div class="deal-card">
+                    <h3>Easy EMI</h3>
+                    <p>Starting from ₹2,000/month</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>About Us</h4>
+                    <p>SmartSell is your trusted platform for premium smartphones with best prices and authentic products.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="shop.html">Shop</a></li>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>Email: support@smartsell.com</p>
+                    <p>Phone: +91-9876543210</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 SmartSell. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/products.js"></script>
+</body>
+</html>
