@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop - SmartSell</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .shop-container {
+            display: flex;
+            gap: 2rem;
+            padding: 2rem 0;
+        }
+
+        .sidebar {
+            flex: 0 0 250px;
+            background: var(--light-color);
+            padding: 1.5rem;
+            border-radius: 10px;
+            height: fit-content;
+        }
+
+        .filter-group {
+            margin-bottom: 2rem;
+        }
+
+        .filter-group h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--dark-color);
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .filter-option input {
+            margin-right: 0.5rem;
+            cursor: pointer;
+        }
+
+        .filter-option label {
+            cursor: pointer;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .main-content {
+            flex: 1;
+        }
+
+        .shop-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .sort-dropdown {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .products-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            color: #999;
+        }
+
+        @media (max-width: 768px) {
+            .shop-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                flex: 1;
+            }
+
+            .products-container {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <h1>📱 SmartSell</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html" class="active">Shop</a></li>
+                <li><a href="account.html">Account</a></li>
+                <li><a href="cart.html" class="cart-link">🛒 Cart <span class="cart-count">0</span></a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="shop-container">
+            <!-- Sidebar Filters -->
+            <aside class="sidebar">
+                <h2>Filters</h2>
+                
+                <div class="filter-group">
+                    <input type="text" class="search-box" id="searchInput" placeholder="Search phones...">
+                </div>
+
+                <div class="filter-group">
+                    <h3>Brand</h3>
+                    <div class="filter-option">
+                        <input type="checkbox" id="brand-apple" value="Apple" onchange="applyFilters()">
+                        <label for="brand-apple">Apple</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="brand-samsung" value="Samsung" onchange="applyFilters()">
+                        <label for="brand-samsung">Samsung</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="brand-xiaomi" value="Xiaomi" onchange="applyFilters()">
+                        <label for="brand-xiaomi">Xiaomi</label>
+                    </div>
+                    <div class="filter-option">
+                        <input type="checkbox" id="brand-oneplus" value="OnePlus" onchange="applyFilters()">
+                        <label for="brand-oneplus">OnePlus</label>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <h3>Price Range</h3>
+                    <label for="priceRange">₹<span id="priceValue">100000</span></label>
+                    <input type="range" id="priceRange" min="0" max="200000" step="10000" value="200000" onchange="applyFilters()">
+                </div>
+
+                <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="resetFilters()">Reset Filters</button>
+            </aside>
+
+            <!-- Main Shop Area -->
+            <div class="main-content">
+                <div class="shop-header">
+                    <h1>All Smartphones</h1>
+                    <select class="sort-dropdown" id="sortDropdown" onchange="applyFilters()">
+                        <option value="popular">Most Popular</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="rating">Highest Rated</option>
+                        <option value="newest">Newest</option>
+                    </select>
+                </div>
+
+                <div class="products-container" id="productsContainer">
+                    <!-- Products loaded here -->
+                </div>
+
+                <div class="no-results" id="noResults" style="display: none;">
+                    No products found. Try adjusting your filters.
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>About Us</h4>
+                    <p>SmartSell is your trusted platform for premium smartphones.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="shop.html">Shop</a></li>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>Email: support@smartsell.com</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/products.js"></script>
+    <script>
+        // Shop page specific functionality
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const selectedBrands = Array.from(document.querySelectorAll('.filter-group input[type="checkbox"]:checked'))
+                .map(cb => cb.value);
+            const maxPrice = parseInt(document.getElementById('priceRange').value);
+            const sortBy = document.getElementById('sortDropdown').value;
+
+            let filtered = productsDatabase.filter(product => {
+                const matchesSearch = product.name.toLowerCase().includes(searchTerm) || 
+                                    product.brand.toLowerCase().includes(searchTerm);
+                const matchesBrand = selectedBrands.length === 0 || selectedBrands.includes(product.brand);
+                const matchesPrice = product.price <= maxPrice;
+                return matchesSearch && matchesBrand && matchesPrice;
+            });
+
+            // Sort products
+            filtered.sort((a, b) => {
+                switch(sortBy) {
+                    case 'price-low':
+                        return a.price - b.price;
+                    case 'price-high':
+                        return b.price - a.price;
+                    case 'rating':
+                        return b.rating - a.rating;
+                    case 'popular':
+                    default:
+                        return b.reviews - a.reviews;
+                }
+            });
+
+            const container = document.getElementById('productsContainer');
+            const noResults = document.getElementById('noResults');
+
+            if (filtered.length === 0) {
+                container.innerHTML = '';
+                noResults.style.display = 'block';
+            } else {
+                container.innerHTML = filtered.map(product => createProductCard(product)).join('');
+                noResults.style.display = 'none';
+            }
+        }
+
+        function resetFilters() {
+            document.querySelectorAll('.filter-group input[type="checkbox"]').forEach(cb => cb.checked = false);
+            document.getElementById('searchInput').value = '';
+            document.getElementById('priceRange').value = 200000;
+            document.getElementById('priceValue').textContent = '200000';
+            document.getElementById('sortDropdown').value = 'popular';
+            applyFilters();
+        }
+
+        document.getElementById('priceRange').addEventListener('input', (e) => {
+            document.getElementById('priceValue').textContent = e.target.value;
+        });
+
+        document.getElementById('searchInput').addEventListener('input', applyFilters);
+
+        // Check for brand filter from homepage
+        window.addEventListener('load', () => {
+            const filterBrand = localStorage.getItem('filterBrand');
+            if (filterBrand) {
+                const brandCheckbox = document.getElementById(`brand-${filterBrand.toLowerCase()}`);
+                if (brandCheckbox) {
+                    brandCheckbox.checked = true;
+                }
+                localStorage.removeItem('filterBrand');
+                applyFilters();
+            } else {
+                applyFilters();
+            }
+            updateCartCount();
+        });
+    </script>
+</body>
+</html>
