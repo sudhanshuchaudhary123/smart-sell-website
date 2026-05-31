@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account - SmartSell</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .account-container { display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; padding: 2rem 0; }
+        .sidebar-menu { background: var(--light-color); padding: 2rem; border-radius: 10px; height: fit-content; }
+        .menu-item { padding: 1rem; margin-bottom: 0.5rem; background: white; border-left: 4px solid transparent; cursor: pointer; transition: all 0.3s; border-radius: 5px; }
+        .menu-item:hover, .menu-item.active { background: var(--primary-color); color: white; border-left-color: var(--primary-color); }
+        .content-section { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: none; }
+        .content-section.active { display: block; }
+        .order-card { border: 1px solid var(--border-color); padding: 1.5rem; margin-bottom: 1rem; border-radius: 10px; }
+        .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .order-id { font-weight: bold; font-size: 1.1rem; }
+        .order-status { padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; font-weight: bold; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-shipped { background: #cfe2ff; color: #084298; }
+        .status-delivered { background: #d1e7dd; color: #0f5132; }
+        .order-items { font-size: 0.95rem; color: #666; margin: 0.5rem 0; }
+        .order-total { font-weight: bold; color: var(--primary-color); font-size: 1.1rem; }
+        .auth-form { max-width: 400px; margin: 0 auto; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+        .form-group input { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 5px; font-size: 1rem; }
+        .btn-submit { width: 100%; padding: 0.75rem; background: var(--primary-color); color: white; border: none; border-radius: 5px; font-size: 1rem; font-weight: bold; cursor: pointer; }
+        .btn-submit:hover { background: #0056b3; }
+        .toggle-form { text-align: center; margin-top: 1rem; color: #666; }
+        .toggle-form a { color: var(--primary-color); cursor: pointer; text-decoration: underline; }
+        @media (max-width: 768px) { .account-container { grid-template-columns: 1fr; } .sidebar-menu { display: flex; gap: 1rem; overflow-x: auto; } }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo"><h1>📱 SmartSell</h1></div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="account.html" class="active">Account</a></li>
+                <li><a href="cart.html" class="cart-link">🛒 Cart <span class="cart-count">0</span></a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h1 style="margin: 2rem 0; font-size: 2rem;">My Account</h1>
+        <div class="account-container" id="loggedInView" style="display: none;">
+            <div class="sidebar-menu">
+                <div class="menu-item active" onclick="showSection('profile')">👤 Profile</div>
+                <div class="menu-item" onclick="showSection('orders')">📦 My Orders</div>
+                <div class="menu-item" onclick="showSection('wishlist')">❤️ Wishlist</div>
+                <div class="menu-item" onclick="logout()">🚪 Logout</div>
+            </div>
+
+            <div style="flex: 1;">
+                <div class="content-section active" id="profile">
+                    <h2>My Profile</h2>
+                    <p><strong>Name:</strong> <span id="userName"></span></p>
+                    <p><strong>Email:</strong> <span id="userEmail"></span></p>
+                    <p><strong>Member Since:</strong> <span id="memberSince"></span></p>
+                </div>
+
+                <div class="content-section" id="orders">
+                    <h2>My Orders</h2>
+                    <div id="ordersList"></div>
+                </div>
+
+                <div class="content-section" id="wishlist">
+                    <h2>My Wishlist</h2>
+                    <div id="wishlistContainer"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="notLoggedInView">
+            <div class="auth-form">
+                <div id="loginForm">
+                    <h2>Login</h2>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="loginEmail" placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" placeholder="Password">
+                    </div>
+                    <button class="btn-submit" onclick="login()">Login</button>
+                    <div class="toggle-form">Don't have account? <a onclick="toggleForm()">Sign Up</a></div>
+                </div>
+
+                <div id="signupForm" style="display: none;">
+                    <h2>Create Account</h2>
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="signupName" placeholder="Your Name">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="signupEmail" placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="signupPassword" placeholder="Password">
+                    </div>
+                    <button class="btn-submit" onclick="signup()">Create Account</button>
+                    <div class="toggle-form">Already have account? <a onclick="toggleForm()">Login</a></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section"><h4>About Us</h4><p>SmartSell is your trusted platform.</p></div>
+                <div class="footer-section"><h4>Contact</h4><p>Email: support@smartsell.com</p></div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/products.js"></script>
+    <script>
+        function loadUser() {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            if (user) {
+                document.getElementById('loggedInView').style.display = 'grid';
+                document.getElementById('notLoggedInView').style.display = 'none';
+                document.getElementById('userName').textContent = user.name;
+                document.getElementById('userEmail').textContent = user.email;
+                document.getElementById('memberSince').textContent = new Date(user.createdAt).toLocaleDateString();
+                loadOrders();
+            } else {
+                document.getElementById('loggedInView').style.display = 'none';
+                document.getElementById('notLoggedInView').style.display = 'block';
+            }
+        }
+
+        function toggleForm() {
+            document.getElementById('loginForm').style.display = document.getElementById('loginForm').style.display === 'none' ? 'block' : 'none';
+            document.getElementById('signupForm').style.display = document.getElementById('signupForm').style.display === 'none' ? 'block' : 'none';
+        }
+
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            if (!email || !password) { alert('Please fill all fields'); return; }
+
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            const user = users.find(u => u.email === email && u.password === password);
+            if (user) {
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                loadUser();
+                alert('Login successful!');
+            } else {
+                alert('Invalid email or password');
+            }
+        }
+
+        function signup() {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            if (!name || !email || !password) { alert('Please fill all fields'); return; }
+
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            if (users.find(u => u.email === email)) { alert('Email already exists'); return; }
+
+            const newUser = { id: Date.now(), name, email, password, createdAt: new Date().toISOString() };
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            localStorage.setItem('currentUser', JSON.stringify(newUser));
+            loadUser();
+            alert('Account created successfully!');
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            loadUser();
+        }
+
+        function loadOrders() {
+            const user = JSON.parse(localStorage.getItem('currentUser'));
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            const userOrders = orders.filter(o => o.customer.email === user.email);
+            const container = document.getElementById('ordersList');
+
+            if (userOrders.length === 0) {
+                container.innerHTML = '<p>No orders yet. <a href="shop.html">Start shopping</a></p>';
+                return;
+            }
+
+            container.innerHTML = userOrders.map(order => `
+                <div class="order-card">
+                    <div class="order-header">
+                        <div class="order-id">Order ${order.id}</div>
+                        <div class="order-status status-${order.status}">${order.status.toUpperCase()}</div>
+                    </div>
+                    <div class="order-items">${order.items.map(i => `${i.quantity}x ${i.name}`).join(', ')}</div>
+                    <div class="order-total">Total: ${formatCurrency(order.total)}</div>
+                </div>
+            `).join('');
+        }
+
+        function showSection(section) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+            document.getElementById(section).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        window.addEventListener('load', () => { loadUser(); updateCartCount(); });
+    </script>
+</body>
+</html>
